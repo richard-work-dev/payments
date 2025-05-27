@@ -1,5 +1,6 @@
 package com.company.payments.controller;
 
+import com.company.payments.constant.ErrorsMessageEnum;
 import com.company.payments.data.request.PaymentRequest;
 import com.company.payments.data.response.ErrorResponse;
 import com.company.payments.data.response.PaymentResponse;
@@ -39,16 +40,16 @@ public class PaymentController {
             // Likely caused by a unique constraint violation on external_id
             log.error("Duplicate external_id detected - request: {}", request, e);
             ErrorResponse errorResponse = new ErrorResponse();
-            errorResponse.setErrorMessage("Payment with external_id " + request.getExternalId() + " already exists");
-            errorResponse.setErrorCode("ERR-01");
+            errorResponse.setErrorMessage(ErrorsMessageEnum.PAYMENT_DUPLICATE_EXTERNAL_ID.getMessage().replace("{}", request.getExternalId()));
+            errorResponse.setErrorCode(ErrorsMessageEnum.PAYMENT_DUPLICATE_EXTERNAL_ID.getCode());
             return ResponseEntity.status(409).body(errorResponse);
 
         } catch (Exception e) {
             // Catch-all for any unexpected errors
             log.error("Unexpected error while creating payment: {}", request, e);
             ErrorResponse errorResponse = new ErrorResponse();
-            errorResponse.setErrorMessage("Error saving payment: " + e.getMessage());
-            errorResponse.setErrorCode("ERR-02");
+            errorResponse.setErrorMessage(ErrorsMessageEnum.PAYMENT_CREATED_ERROR.getMessage());
+            errorResponse.setErrorCode(ErrorsMessageEnum.PAYMENT_CREATED_ERROR.getCode());
             return ResponseEntity.status(500).body(errorResponse);
         }
     }
@@ -68,8 +69,8 @@ public class PaymentController {
 
             if (paymentResponse.isEmpty()) {
                 ErrorResponse errorResponse = new ErrorResponse();
-                errorResponse.setErrorMessage("Payment with external_id " + externalId + " not found");
-                errorResponse.setErrorCode("ERR-03");
+                errorResponse.setErrorMessage(ErrorsMessageEnum.PAYMENT_NOT_FOUND.getMessage().replace("{}", externalId));
+                errorResponse.setErrorCode(ErrorsMessageEnum.PAYMENT_NOT_FOUND.getCode());
                 return ResponseEntity.status(404).body(errorResponse);
             }
 
@@ -78,8 +79,8 @@ public class PaymentController {
         } catch (Exception e) {
             log.error("Error retrieving payment: {}", externalId, e);
             ErrorResponse errorResponse = new ErrorResponse();
-            errorResponse.setErrorMessage("Error getting payment: " + e.getMessage());
-            errorResponse.setErrorCode("ERR-04");
+            errorResponse.setErrorMessage(ErrorsMessageEnum.PAYMENT_GET_ERROR.getMessage().replace("{}", externalId));
+            errorResponse.setErrorCode(ErrorsMessageEnum.PAYMENT_GET_ERROR.getCode());
             return ResponseEntity.status(500).body(errorResponse);
         }
     }
@@ -96,8 +97,8 @@ public class PaymentController {
         } catch (Exception e) {
             log.error("Error retrieving payments for email: {}", email, e);
             ErrorResponse errorResponse = new ErrorResponse();
-            errorResponse.setErrorMessage("Error getting payments: " + e.getMessage());
-            errorResponse.setErrorCode("ERR-05");
+            errorResponse.setErrorMessage(ErrorsMessageEnum.PAYMENT_GET_ERROR.getMessage().replace("{}", email));
+            errorResponse.setErrorCode(ErrorsMessageEnum.PAYMENT_GET_ERROR.getCode());
             return ResponseEntity.status(500).body(errorResponse);
         }
     }
