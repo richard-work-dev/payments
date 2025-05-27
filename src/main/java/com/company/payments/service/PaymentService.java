@@ -16,7 +16,7 @@ import java.util.Optional;
 @Service
 public class PaymentService {
 
-    private PaymentRepository paymentRepository;
+    private final PaymentRepository paymentRepository;
 
     public PaymentService(PaymentRepository paymentRepository) {
         this.paymentRepository = paymentRepository;
@@ -32,7 +32,7 @@ public class PaymentService {
             paymentEntity.setEmail(paymentRequest.getEmail());
 
             PaymentEntity savedPayment = paymentRepository.save(paymentEntity);
-            log.info("Saved payment: {}", savedPayment);
+            log.info("Saved payment id: {} - external_id: {}", savedPayment.getExternalId(), savedPayment.getExternalId());
             PaymentResponse paymentResponse = new PaymentResponse();
             paymentResponse.setExternalId(savedPayment.getExternalId());
             paymentResponse.setAmount(savedPayment.getAmount());
